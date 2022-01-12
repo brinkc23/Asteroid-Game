@@ -1,0 +1,514 @@
+var score = 0;
+var health = 100;
+var hiscore = 0;
+var level = 1;
+var regen = 100;
+var timer = 0; 
+var digit = 0;
+var start = createSprite(200, 300);
+var again = createSprite(200, 350);
+var bg = createSprite(200, 200);
+var star = createSprite(200, 50);
+var rock = createSprite(20, 350);
+var rock1 = createSprite(-20, -350);
+var rock2 = createSprite(-20, -350);
+var rock3 = createSprite(-20, -350);
+var heal = createSprite(-200, -320);
+var beam = createSprite(800, 200);
+var ship = createSprite(200, 200);
+
+start.setAnimation("start");
+beam.setAnimation("laser");
+ship.setAnimation("ship");
+bg.setAnimation("bg");
+ship.setAnimation("ship");
+star.setAnimation("star");
+rock.setAnimation("rock");
+
+star.setCollider("circle");
+rock.setCollider("circle");
+rock1.setCollider("circle");
+rock2.setCollider("circle");
+rock3.setCollider("circle");
+ship.setCollider("rectangle", 0, 0, 35, 55);
+
+again.scale = 0.5;
+bg.scale=4.5;
+beam.scale = 0.5;
+
+bg.debug = false;
+ship.debug = false;
+star.debug = false;
+rock.debug = false;
+rock1.debug = false;
+rock2.debug = false;
+rock3.debug = false;
+start.degbug = true;
+again.visible = false;
+
+function draw() {
+  
+  if (ship.isTouching(start)) {
+    background("black");
+    start.setCollider("rectangle", 0, 0, 1600, 1600);
+  bg.visible = true;
+ship.visible = true;
+star.visible = true;
+rock.visible = true;
+rock1.visible = true;
+rock2.visible = true;
+rock3.visible = true;
+start.visible = false;
+rock.velocityX = 5;
+
+} else {
+  
+  background("black");
+  fill("white");
+  textSize(30);
+  text("Fly on START to begin!", 47.5, 70);
+  textSize(20);
+  text("-Use Arrow Keys or WASD to move.", 50, 100);
+  text("-Collect Stars", 50, 120);
+  text("-Avoid and Shoot Asteroids", 50, 140);
+  text("-Press SPACE to fire!", 50, 160);
+  text("-Press ESC to Quit.", 50, 180);
+  score = 0;
+    bg.visible = false;
+star.visible = false;
+rock.visible = false;
+rock1.visible = false;
+rock2.visible = false;
+rock3.visible = false;
+rock.x = -80;
+}
+
+bg.x = randomNumber(199, 201);
+bg.y = randomNumber(199, 201);
+
+rock.rotation = rock.rotation + 3;
+
+if (ship.isTouching(rock)) {
+  health = health - 1;
+  rock.displace(ship);
+}
+
+if (ship.isTouching(rock1)) {
+  health = health - 1;
+   rock1.displace(ship);
+}
+
+if (ship.isTouching(rock2)) {
+  health = health - 1;
+   rock2.displace(ship);
+}
+
+if (ship.isTouching(rock3)) {
+  health = health - 1;
+   rock3.displace(ship);
+}
+
+if (ship.isTouching(star)) {
+  score = score + 1;
+  star.x = randomNumber(20, 380);
+  star.y = randomNumber(20, 380);
+}
+
+if (score > 19) {
+  
+  rock1.setAnimation("rock");
+    rock1.visible = true;
+  rock1.velocityY = 5; 
+  rock1.rotationSpeed = 3;
+  level = 2;
+  
+} else {
+  
+  rock1.x = -560;
+    rock1.visible = false;
+}
+if (rock1.y > 460 || rock1.x > 460 || rock1.y < -60 || rock1.y < -60){
+  
+  rock1.y = -60;
+  rock1.x = randomNumber(20,380);
+  rock1.setVelocity(0, 5);
+}
+
+if (score > 29) {
+  
+  rock2.setAnimation("rock");
+    rock2.visible = true;
+  rock2.velocityX = -5; 
+  rock2.rotationSpeed = -3;
+  level = 3;
+  
+} else {
+  
+  rock2.y = 560;
+  rock2.visible = false;
+}
+
+if (rock2.x < -60 || rock2.x > 460 || rock2.y > 460 || rock2.y < -60){
+  
+  rock2.x = 460;
+  rock2.y = randomNumber(20,380);
+  rock2.setVelocity(-5, 0);
+}
+
+if (score > 39) {
+  
+  rock3.setAnimation("rock");
+    rock3.visible = true;
+  rock3.velocityY =-5; 
+  rock3.rotationSpeed = -3;
+  level = 4;
+  
+} else {
+  
+    rock3.visible = false;
+  rock3.y = 560;
+}
+
+if (rock3.y < -60|| rock3.x > 460 || rock3.y > 460 || rock3.x < -60){
+  
+  rock3.y = 460;
+  rock3.x = randomNumber(20,380);
+  rock3.setVelocity(0, -5);
+}
+
+if (health < 31) {
+  
+  heal.setAnimation("heal");
+  heal.velocityY = 4;
+  heal.rotation = heal.rotation + 2; 
+  
+} else { 
+  
+  heal.x = -95;
+  heal.y = -95;
+  
+}
+  
+if (heal.y > 420) {
+  
+  heal.y = -20;
+  heal.x = randomNumber(-50, 450);
+}
+if (ship.isTouching(heal)) {
+  
+  health = health + 10;
+  health.x = 800;
+}
+
+  if (keyDown("space") && ship.rotation === 0 && regen === 100) {
+    
+    beam.x = ship.x;
+    beam.y = ship.y - 20;
+    beam.setVelocity(0, -8);
+    beam.rotation = 0;
+    regen = 0;
+  }
+  
+    if (keyDown("space") && ship.rotation === 270 && regen === 100) {
+      
+    beam.x = ship.x - 20;
+    beam.y = ship.y;
+    beam.setVelocity(-8, 0);
+    beam.rotation = 90;
+       regen = 0;
+  }
+  
+    if (keyDown("space") && ship.rotation === 90 && regen === 100) {
+      
+    beam.x = ship.x + 20;
+    beam.y = ship.y;
+    beam.setVelocity(8, 0);
+    beam.rotation = 90;
+       regen = 0;
+  }
+  
+    if (keyDown("space") && ship.rotation === 180 && regen === 100) {
+      
+    beam.x = ship.x;
+    beam.y = ship.y + 20;
+    beam.setVelocity(0, 8);
+    beam.rotation = 0;
+       regen = 0;
+  }
+  
+    if (keyDown("space") && ship.rotation === 225 && regen === 100) {
+      
+    beam.x = ship.x -15;
+    beam.y = ship.y + 15;
+    beam.setVelocity(-7, 7);
+    beam.rotation = 225;
+       regen = 0;
+  }
+  
+    if (keyDown("space") && ship.rotation === 315 && regen === 100) {
+      
+    beam.x = ship.x - 15;
+    beam.y = ship.y - 15;
+    beam.setVelocity(-7, -7);
+    beam.rotation = 315;
+       regen = 0;
+  }
+  
+    if (keyDown("space") && ship.rotation === 135 && regen === 100) {
+      
+    beam.x = ship.x +20;
+    beam.y = ship.y +20;
+    beam.setVelocity(7, 7);
+    beam.rotation = 135;
+       regen = 0;
+  }
+  
+    if (keyWentDown("space") && ship.rotation === 45 && regen === 100) {
+      
+    beam.x = ship.x + 15;
+    beam.y = ship.y - 15;
+    beam.setVelocity(7, -7);
+    beam.rotation = 45;
+       regen = 0;
+  }
+
+  if (keyDown("left") || keyDown("a")) {
+    
+  ship.x = ship.x - 6;
+  ship.rotation = 270;
+}
+
+if (keyDown("right") || keyDown("d")) {
+  
+  ship.x = ship.x + 6;
+  ship.rotation = 90;
+}
+
+if (keyDown("up") || keyDown("w")) {
+  
+  ship.y = ship.y - 6;
+  ship.rotation = 0;
+  
+}
+
+if (keyDown("down") || keyDown("s")) {
+  
+  ship.y = ship.y + 6;
+  ship.rotation = 180;
+}
+
+if (keyDown("down") && keyDown("left") || keyDown("s") && keyDown("a"))  {
+  
+  ship.rotation = 225;
+  ship.x = ship.x -0.5;
+  ship.y = ship.y + 0.5;
+}
+
+if (keyDown("up") && keyDown("left") || keyDown("w") && keyDown("a")) {
+  
+  ship.rotation = 315;
+  ship.x = ship.x -0.5;
+  ship.y = ship.y - 0.5;
+}
+
+if (keyDown("down") && keyDown("right") || keyDown("s") && keyDown("d")) {
+  
+  ship.rotation = 135;
+  ship.x = ship.x + 0.5;
+  ship.y = ship.y + 0.5;
+}
+
+if (keyDown("up") && keyDown("right") || keyDown("w") && keyDown("d")) {
+  
+  ship.rotation = 45;
+  ship.x = ship.x + 0.5;
+  ship.y = ship.y - 0.5;
+}
+
+if (regen < 100) {
+  
+  ship.setAnimation("invince");
+  
+} else {
+  
+  ship.setAnimation("ship");
+}
+
+if (ship.x > 410) {
+  
+  ship.x = -10;
+}
+
+if (ship.x < -10) {
+  
+  ship.x = 410;
+}
+
+if (ship.y > 410) {
+  
+  ship.y = -10;
+}
+
+if (ship.y < -10) {
+  
+  ship.y = 410;
+}
+
+if (rock.x > 420|| rock.x < -20 || rock.y > 420 || rock.y < -20) {
+  
+  rock.x = -20;
+  rock.y = randomNumber(20, 380);
+  rock.setVelocity(5, 0);
+}
+
+if (beam.isTouching(rock) 
+|| beam.isTouching(rock1) 
+|| beam.isTouching(rock2) 
+|| beam.isTouching(rock3)) {
+  
+rock.bounceOff(beam);
+rock1.bounceOff(beam);
+rock2.bounceOff(beam);
+rock3.bounceOff(beam);
+beam.x = 800;
+beam.y = 800;
+beam.setVelocity(0,0);
+score = score + 1;
+}
+
+  drawSprites();
+
+  fill("white");
+  textSize(20);
+  text("Health:", 280, 30);
+  
+  text (health, 350, 30);
+  
+  text ("Score:", 20, 30);
+  
+  text (score, 90, 30);
+  
+  text ("Beam:", 225, 385);
+  
+  rect (285, 370, regen, 15);
+  
+  text ("Level:", 15, 385);
+  
+  text (level, 80, 385);
+  
+  if (regen < 100) {
+    
+regen = regen + 5;
+}
+
+if (score > 9) {
+  
+  digit = 180;}
+  
+  if (score < 9) {
+    
+  digit = 190;
+  }
+  
+  if (score > 99) {
+    
+  digit = 170;
+  }
+  
+  if (keyDown(27) && ship.isTouching(start)) {
+    health = health - 100;
+  }
+  
+  if (health < 1) {
+
+    background("black");
+    
+        if (score > hiscore && timer === 0){
+          
+      hiscore = score;
+    }
+    fill("white");
+    textSize(50);
+    text("Game Over!" , 65, 200);
+    
+    text(score, digit, 250);
+    
+    textSize(25);
+    
+    text ("High Score:", 180, 50);
+    
+    text  (hiscore, 330, 50);
+    
+    if (hiscore === score && score > 0  && timer === 0) {
+      
+            textSize(25);
+      text("New High Score!", randomNumber(105.5, 109.5), randomNumber(299, 301));
+    }
+    
+    heal.y = -300;
+    
+    again.setAnimation("again");
+    
+    again.x = 200;
+    
+    again.y = 350;
+    
+    again.setCollider("rectangle");
+    
+bg.visible = false;
+star.visible = false;
+rock.visible = false;
+rock1.visible = false;
+rock2.visible = false;
+rock3.visible = false;
+again.visible = true;
+
+again.x = 200;
+again.y = 350;
+rock.x = -40;
+rock1.y = -40;
+rock2.x = 440;
+rock3.y = 440;
+star.x = -40;
+
+if (ship.isTouching(again)) {
+  
+ timer = timer + 1;
+ 
+} else {
+  
+  timer = 0;
+}
+
+if (timer === 20) {
+  
+  score = 3;
+}
+
+if (timer === 40) {
+  
+  score = 2;
+}
+
+if (timer === 80) {
+  
+  score = 1;
+}
+
+if (timer > 100) {
+  
+ score = 0;
+  health = 100;
+  timer = 0;
+  star.x = 200;
+  star.y = 50;
+  rock1.visible = false;
+  rock2.visible = false;
+  rock3.visible = false;
+}
+    drawSprites();
+    
+  }
+  
+}
+
